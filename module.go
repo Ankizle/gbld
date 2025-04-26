@@ -13,18 +13,20 @@ type Module struct {
 	files []*File
 }
 
-func (pj *Project) AddModule(name string, src string, out string) {
-	pj.modules = append(pj.modules, &Module{
+func (pj *Project) AddModule(name string, src string, out string) *Module {
+	mod := &Module{
 		pj: pj,
 
 		name: name,
 		src:  src,
 		out:  out,
-	})
+	}
+	pj.modules = append(pj.modules, mod)
+	return mod
 }
 
-func (pj *Project) AddModuleDefault(name string) {
-	pj.AddModule(name, filepath.Join(pj.root, name, "src"), filepath.Join(pj.out, name))
+func (pj *Project) AddModuleDefault(name string) *Module {
+	return pj.AddModule(name, filepath.Join(pj.root, name, "src"), filepath.Join(pj.out, name))
 }
 
 func (mod *Module) Compile() error {

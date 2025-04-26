@@ -12,13 +12,15 @@ type File struct {
 	out  string
 }
 
-func (mod *Module) AddFile(name string) {
-	mod.files = append(mod.files, &File{
+func (mod *Module) AddFile(name string) *File {
+	file := &File{
 		mod: mod,
 
 		name: filepath.Join(mod.src, name),
 		out:  filepath.Join(mod.out, change_ext(name, ".o")),
-	})
+	}
+	mod.files = append(mod.files, file)
+	return file
 }
 
 func (file *File) Compile() error {
