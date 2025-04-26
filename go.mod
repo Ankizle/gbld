@@ -1,1 +1,1 @@
-module gbld
+module github.com/Ankizle/gbld

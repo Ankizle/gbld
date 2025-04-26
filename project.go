@@ -1,30 +1,38 @@
 package gbld
 
+import (
+	"path/filepath"
+	"runtime"
+)
+
 type Project struct {
-	CC       string
-	FLAGS    []string
-	PLATFORM string
+	CC    string
+	FLAGS []string
+	OS    string
 
 	name string
 
-	root string
-	out  string
+	root   string
+	out    string
+	public string
 
 	modules []*Module
 }
 
-func NewProject(name string, root string, out string) *Project {
-	return &Project{
-		name: name,
-		root: root,
-		out:  out,
-	}
+func NewProject(name string, root string, out string, public string) *Project {
+	pj := &Project{}
+	pj.name = name
+	pj.root = root
+	pj.out = filepath.Join(pj.root, out)
+	pj.public = filepath.Join(pj.root, public)
+	return pj
 }
 
 func NewProjectDefault(name string) *Project {
-	pj := NewProject(name, ".", "./target")
+	pj := NewProject(name, ".", "target", "public")
 	pj.CC = "clang++"
 	pj.FLAGS = []string{"-fdiagnostics-color=always"}
+	pj.OS = runtime.GOOS
 	return pj
 }
 
