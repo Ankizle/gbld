@@ -4,7 +4,7 @@ type CompileError struct {
 	msg []byte
 }
 
-func NewCompileError(msg []byte, e error) *CompileError {
+func to_compile_error(msg []byte, e error) error {
 	if e != nil {
 		return &CompileError{msg}
 	} else {
