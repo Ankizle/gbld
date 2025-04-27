@@ -30,10 +30,10 @@ func (file *File) Compile() error {
 	args = append(args, "-o", file.out)       // output file
 	args = append(args, "-c")                 // compile to .o file
 
-	exec.Command(
+	cmd := exec.Command(
 		file.mod.pj.CC,
 		args...,
 	)
 
-	return nil
+	return NewCompileError(cmd.CombinedOutput())
 }

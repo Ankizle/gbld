@@ -1,6 +1,9 @@
 package gbld
 
-import "path/filepath"
+import (
+	"os"
+	"path/filepath"
+)
 
 type Module struct {
 	pj *Project
@@ -30,6 +33,10 @@ func (pj *Project) AddModuleDefault(name string) *Module {
 }
 
 func (mod *Module) Compile() error {
+
+	// make sure the module's output directory exists
+	os.MkdirAll(mod.out, mod.pj.PERMISSION)
+
 	for _, file := range mod.files {
 		if e := file.Compile(); e != nil {
 			return e // error compiling a file to an object
