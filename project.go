@@ -20,6 +20,7 @@ type Project struct {
 	public string
 
 	includes []string
+	libs     []string
 
 	cmd_log []CommandLog
 
@@ -45,6 +46,10 @@ func NewProjectDefault(name string) *Project {
 	return pj
 }
 
+func (pj *Project) AddLib(lib string) {
+	pj.libs = append(pj.libs, lib)
+}
+
 func (pj *Project) get_libs() (libs []string) {
 
 	for _, ext := range pj.externals {
@@ -56,7 +61,10 @@ func (pj *Project) get_libs() (libs []string) {
 			libs = append(libs, "-l"+mod.name) // link libraries
 		}
 	}
-	return libs
+
+	libs = append(libs, pj.libs...)
+
+	return reverse(libs)
 }
 
 func (pj *Project) get_includes() []string {

@@ -1,7 +1,6 @@
 package gbld
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -31,9 +30,11 @@ func (pj *Project) AddExternal(data ExternalData) *External {
 }
 
 func (ext *External) get_libs() (libs []string) {
-	libs = append(libs, "-L"+ext.data.Bin) // linking directory (compile time)
-	for _, lib := range ext.data.Libs {
-		libs = append(libs, "-l"+lib) // add the libs to use
+	if ext.data.Bin != "" {
+		for _, lib := range ext.data.Libs {
+			libs = append(libs, "-l"+lib) // add the libs to use
+		}
+		libs = append(libs, "-L"+ext.data.Bin) // linking directory (compile time)
 	}
 	return libs
 }
@@ -49,8 +50,6 @@ func (ext *External) Compile() error {
 
 	cmds_str := strings.Join(cmds, "&&")
 
-	fmt.Println(cmds)
-
 	if len(cmds) > 0 {
 		cmd := ext.pj.Command([]string{"/bin/sh", "-c", cmds_str}, nil)
 		out, e := cmd.CombinedOutput()
@@ -63,7 +62,7 @@ func (ext *External) Compile() error {
 
 	// binaries
 	for _, lib := range ext.data.Libs {
-		lib_data, filename, e := read_ignore_ext(ext.data.Bin, "lib"+lib)
+		lib_data, filename, e := read_all_ext(ext.data.Bin, "lib"+lib, []string{".so.3", ".so.1", ".so", ".a"})
 
 		if e != nil {
 			return e

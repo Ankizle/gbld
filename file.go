@@ -42,7 +42,8 @@ func (file *File) Compile() error {
 	args = append(args, file.mod.pj.FLAGS...)          // user defined flags
 	args = append(args, file.mod.pj.get_includes()...) // get include directories
 	args = append(args, "-o", file.out)                // output file
-	args = append(args, "-c")                          // compile to .o file
+	args = append(args, "-c", "-fPIC")                 // compile to .o file
+	args = append(args, "-MMD")                        // header dependencies
 	args = append(args, file.path)                     // specify the path of the file
 
 	cmd := file.mod.pj.Command(
@@ -51,11 +52,11 @@ func (file *File) Compile() error {
 	)
 
 	// check if we actually need to recompile
-	if file.hash == file.mod.hashes[file.name] { // check if hash matches
-		if _, e := os.Stat(file.out); e == nil { // check if .o file exists (user may have broken it)
-			return nil // no need to recompile
-		}
-	}
+	// if file.hash == file.mod.hashes[file.name] { // check if hash matches
+	// 	if _, e := os.Stat(file.out); e == nil { // check if .o file exists (user may have broken it)
+	// 		return nil // no need to recompile
+	// 	}
+	// }
 
 	file.mod.hashes[file.name] = file.hash
 
