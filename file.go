@@ -25,6 +25,11 @@ func (mod *Module) AddFile(name string) *File {
 		out:  filepath.Join(mod.out, change_ext(name, ".o")),
 	}
 
+	// now just "touch" the output file
+	odir := filepath.Dir(file.out)
+	os.MkdirAll(odir, mod.pj.PERMISSION) // make its directory
+	os.Create(file.out)                  // make the file
+
 	// read the file and hash it
 	file_dat, e := os.ReadFile(file.path)
 	if e == nil {

@@ -16,6 +16,8 @@ type Module struct {
 	src string
 	out string
 
+	out_file string // used when compiling static, shared, or executable
+
 	files       []*File
 	hashes_path string
 	hashes      map[string][16]byte

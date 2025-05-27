@@ -5,8 +5,10 @@ import (
 	"path/filepath"
 )
 
-func (pj *Project) AddShared(name string) *Module {
-	return pj.AddModuleDefault(COMPILE_SHARED, name)
+func (pj *Project) AddShared(name string, out string) *Module {
+	mod := pj.AddModuleDefault(COMPILE_SHARED, name)
+	mod.out_file = out
+	return mod
 }
 
 func (mod *Module) CompileShared() error {
@@ -27,10 +29,10 @@ func (mod *Module) CompileShared() error {
 
 	var args []string
 	args = append(args, mod.pj.CC)
-	args = append(args, mod.pj.FLAGS...)                                        // user flags
-	args = append(args, "-shared", "-fPIC")                                     // make a shared library
-	args = append(args, "-o", filepath.Join(mod.pj.public, "lib"+mod.name+ext)) // output file
-	args = append(args, o_paths...)                                             // files to compile
+	args = append(args, mod.pj.FLAGS...)                                            // user flags
+	args = append(args, "-shared", "-fPIC")                                         // make a shared library
+	args = append(args, "-o", filepath.Join(mod.pj.public, "lib"+mod.out_file+ext)) // output file
+	args = append(args, o_paths...)                                                 // files to compile
 
 	cmd := mod.pj.Command(
 		args,

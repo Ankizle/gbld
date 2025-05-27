@@ -6,8 +6,10 @@ import (
 	"path/filepath"
 )
 
-func (pj *Project) AddExecutable(name string) *Module {
-	return pj.AddModuleDefault(COMPILE_EXECUTABLE, name)
+func (pj *Project) AddExecutable(name string, out string) *Module {
+	mod := pj.AddModuleDefault(COMPILE_EXECUTABLE, name)
+	mod.out_file = out
+	return mod
 }
 
 func (mod *Module) CompileExecutable() error {
@@ -31,12 +33,12 @@ func (mod *Module) CompileExecutable() error {
 
 	var args []string
 	args = append(args, mod.pj.CC)
-	args = append(args, mod.pj.FLAGS...)                                  // user flags
-	args = append(args, "-o", filepath.Join(mod.pj.public, mod.name+ext)) // output file
-	args = append(args, o_paths...)                                       // files to compile
-	args = append(args, rpath)                                            // add rpath
-	args = append(args, "-L"+mod.pj.public)                               // directory to look for link targets
-	args = append(args, mod.pj.get_libs()...)                             // get libraries to link
+	args = append(args, mod.pj.FLAGS...)                                      // user flags
+	args = append(args, "-o", filepath.Join(mod.pj.public, mod.out_file+ext)) // output file
+	args = append(args, o_paths...)                                           // files to compile
+	args = append(args, rpath)                                                // add rpath
+	args = append(args, "-L"+mod.pj.public)                                   // directory to look for link targets
+	args = append(args, mod.pj.get_libs()...)                                 // get libraries to link
 
 	fmt.Println(args)
 
