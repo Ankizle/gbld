@@ -13,7 +13,8 @@ type Project struct {
 	build  string
 	public string
 
-	env map[string]string
+	env           map[string]string
+	command_flags map[string]interface{}
 
 	log_file *os.File
 	log_mtx  sync.Mutex

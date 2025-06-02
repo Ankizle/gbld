@@ -13,14 +13,39 @@ type Command struct {
 	name  string
 	file  File
 	args  []string
-	flags map[string]string
+	flags map[string]interface{}
+}
+
+func parse_flag_value(value interface{}) (string, bool) {
+	switch value := value.(type) {
+	case string:
+		return value, true
+	case bool:
+		if value {
+			return "", true
+		} else {
+			return "", false
+		}
+	case int:
+		return strconv.Itoa(value), true
+	default:
+		return fmt.Sprint(value), true
+	}
+}
+
+func (pj *Project) SetCommandFlag(name string, value interface{}) {
+	pj.command_flags[name] = value
+}
+
+func (mod *Module) SetCommandFlag(name string, value interface{}) {
+	mod.command_flags[name] = value
 }
 
 func (mod *Module) NewCommand() *Command {
 	cmd := new(Command)
 	cmd.mod = mod
 
-	cmd.flags = make(map[string]string)
+	cmd.flags = make(map[string]interface{})
 	cmd.args = make([]string, 0)
 
 	mod.command_log = append(mod.command_log, cmd) // for logging/generating compile_commands.json
@@ -45,18 +70,7 @@ func (cmd *Command) SetArgs(args ...string) {
 }
 
 func (cmd *Command) SetFlag(name string, value interface{}) {
-	switch value := value.(type) {
-	case string:
-		cmd.flags[name] = value
-	case bool:
-		if value {
-			cmd.flags[name] = ""
-		}
-	case int:
-		cmd.flags[name] = strconv.Itoa(value)
-	default:
-		cmd.flags[name] = fmt.Sprint(value)
-	}
+	cmd.flags[name] = value
 }
 
 func (cmd *Command) GetFile() File {
@@ -67,8 +81,23 @@ func (cmd *Command) GetArgList() []string {
 	var list []string
 	list = append(list, cmd.name)
 
+	// collect all the flags
+	flags := make(map[string]interface{})
+	for name, value := range cmd.mod.pj.command_flags {
+		flags[name] = value
+	}
+	for name, value := range cmd.mod.command_flags {
+		flags[name] = value
+	}
 	for name, value := range cmd.flags {
-		list = append(list, name, value)
+		flags[name] = value
+	}
+
+	for name, value := range flags {
+		v, ok := parse_flag_value(value)
+		if ok {
+			list = append(list, name, v)
+		}
 	}
 
 	for _, arg := range cmd.args {

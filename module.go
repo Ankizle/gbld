@@ -12,6 +12,8 @@ type Module struct {
 	root  string
 	build string
 
+	command_flags map[string]interface{}
+
 	compile_callback func()
 
 	command_log []*Command
