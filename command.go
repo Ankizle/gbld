@@ -10,11 +10,19 @@ import (
 type Command struct {
 	mod *Module
 
+	isolation uint64
+
 	name  string
 	file  File
 	args  []string
 	flags map[string]interface{}
 }
+
+const (
+	CommandIsolation_Project = 0
+	CommandIsolation_Module  = 1 << iota
+	CommandIsolation_File
+)
 
 func parse_flag_value(value interface{}) (string, bool) {
 	switch value := value.(type) {
@@ -41,16 +49,20 @@ func (mod *Module) SetCommandFlag(name string, value interface{}) {
 	mod.command_flags[name] = value
 }
 
-func (mod *Module) NewCommand() *Command {
+func (mod *Module) NewCommandIsolated(isolation uint64) *Command {
 	cmd := new(Command)
 	cmd.mod = mod
+	cmd.isolation = isolation
 
 	cmd.flags = make(map[string]interface{})
 	cmd.args = make([]string, 0)
 
 	mod.command_log = append(mod.command_log, cmd) // for logging/generating compile_commands.json
-
 	return cmd
+}
+
+func (mod *Module) NewCommand() *Command {
+	return mod.NewCommandIsolated(CommandIsolation_Project | CommandIsolation_Module | CommandIsolation_File)
 }
 
 func (cmd *Command) SetName(name string) {
@@ -83,14 +95,21 @@ func (cmd *Command) GetArgList() []string {
 
 	// collect all the flags
 	flags := make(map[string]interface{})
-	for name, value := range cmd.mod.pj.command_flags {
-		flags[name] = value
+
+	if cmd.isolation&CommandIsolation_Project > 0 {
+		for name, value := range cmd.mod.pj.command_flags {
+			flags[name] = value
+		}
 	}
-	for name, value := range cmd.mod.command_flags {
-		flags[name] = value
+	if cmd.isolation&CommandIsolation_Module > 0 {
+		for name, value := range cmd.mod.command_flags {
+			flags[name] = value
+		}
 	}
-	for name, value := range cmd.flags {
-		flags[name] = value
+	if cmd.isolation&CommandIsolation_File > 0 {
+		for name, value := range cmd.flags {
+			flags[name] = value
+		}
 	}
 
 	for name, value := range flags {
