@@ -1,0 +1,1 @@
+To run the examples, clone this repo and cd to the examples/\[number\] directory. Then run `go run make.go`.
