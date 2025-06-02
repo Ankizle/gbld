@@ -19,9 +19,9 @@ type Command struct {
 }
 
 const (
-	CommandIsolation_Project = 0
-	CommandIsolation_Module  = 1 << iota
-	CommandIsolation_File
+	CommandIsolation_Project = 0b001
+	CommandIsolation_Module  = 0b010
+	CommandIsolation_File    = 0b100
 )
 
 func parse_flag_value(value interface{}) (string, bool) {
