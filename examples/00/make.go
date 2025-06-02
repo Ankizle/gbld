@@ -61,12 +61,13 @@ func main() {
 
 			// execute the build command
 			cmd := mod.NewCommand()
-			cmd.SetFlag("-I", mod.Abs("."))
-			cmd.SetFlag("-c", true)
-			cmd.SetFlag("-fPIC", true)
-			cmd.SetFlag("-o", obj.Path())
+			cmd.AddFlag("-I", mod.Abs("."))
+			cmd.AddFlag("-MMD", true)
+			cmd.AddFlag("-c", true)
+			cmd.AddFlag("-fPIC", true)
+			cmd.AddFlag("-o", obj.Path())
 
-			cmd.SetArg(src.Path())
+			cmd.AddArg(src.Path())
 			cmd.SetFile(src)
 
 			cmd.SetName(pj.Getenv("CPP"))
@@ -93,9 +94,9 @@ func main() {
 		gbld_fs.SetupFile(out)
 
 		cmd := mod.NewCommand()
-		cmd.SetFlag("-o", out.Path())
+		cmd.AddFlag("-o", out.Path())
 
-		cmd.SetArgs(gbld_fs.Paths(objs)...)
+		cmd.AddArgs(gbld_fs.Paths(objs)...)
 		cmd.SetName(pj.Getenv("CPP"))
 
 		cmd.Exec(mod.Abs("."), func(output []byte) {

@@ -14,7 +14,7 @@ type Project struct {
 	public string
 
 	env           map[string]string
-	command_flags map[string]interface{}
+	command_flags []CommandFlag
 
 	log_file *os.File
 	log_mtx  sync.Mutex
@@ -29,7 +29,7 @@ func NewProject(root string, build string, public string) *Project {
 	pj.public = public
 
 	pj.env = make(map[string]string)
-	pj.command_flags = make(map[string]interface{})
+	pj.command_flags = make([]CommandFlag, 0)
 
 	pj.log_file = os.Stdout // default
 

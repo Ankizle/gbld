@@ -12,7 +12,7 @@ type Module struct {
 	root  string
 	build string
 
-	command_flags map[string]interface{}
+	command_flags []CommandFlag
 
 	compile_callback func()
 
@@ -29,7 +29,7 @@ func (pj *Project) AddModule(relative_path string) *Module {
 	mod.root = root
 	mod.build = build
 
-	mod.command_flags = make(map[string]interface{})
+	mod.command_flags = make([]CommandFlag, 0)
 
 	mod.compile_callback = func() {
 		fmt.Fprintln(pj.log_file, "warning:", "compile callback for", relative_path, "is unset")

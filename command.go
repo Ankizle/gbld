@@ -7,6 +7,11 @@ import (
 	"sync"
 )
 
+type CommandFlag struct {
+	name  string
+	value interface{}
+}
+
 type Command struct {
 	mod *Module
 
@@ -15,7 +20,7 @@ type Command struct {
 	name  string
 	file  File
 	args  []string
-	flags map[string]interface{}
+	flags []CommandFlag
 }
 
 const (
@@ -41,12 +46,16 @@ func parse_flag_value(value interface{}) (string, bool) {
 	}
 }
 
-func (pj *Project) SetCommandFlag(name string, value interface{}) {
-	pj.command_flags[name] = value
+func (pj *Project) AddCommandFlag(name string, value interface{}) {
+	pj.command_flags = append(pj.command_flags, CommandFlag{
+		name, value,
+	})
 }
 
-func (mod *Module) SetCommandFlag(name string, value interface{}) {
-	mod.command_flags[name] = value
+func (mod *Module) AddCommandFlag(name string, value interface{}) {
+	mod.command_flags = append(mod.command_flags, CommandFlag{
+		name, value,
+	})
 }
 
 func (mod *Module) NewCommandIsolated(isolation uint64) *Command {
@@ -54,7 +63,7 @@ func (mod *Module) NewCommandIsolated(isolation uint64) *Command {
 	cmd.mod = mod
 	cmd.isolation = isolation
 
-	cmd.flags = make(map[string]interface{})
+	cmd.flags = make([]CommandFlag, 0)
 	cmd.args = make([]string, 0)
 
 	mod.command_log = append(mod.command_log, cmd) // for logging/generating compile_commands.json
@@ -73,16 +82,18 @@ func (cmd *Command) SetFile(file File) {
 	cmd.file = file
 }
 
-func (cmd *Command) SetArg(arg string) {
+func (cmd *Command) AddArg(arg string) {
 	cmd.args = append(cmd.args, arg)
 }
 
-func (cmd *Command) SetArgs(args ...string) {
+func (cmd *Command) AddArgs(args ...string) {
 	cmd.args = append(cmd.args, args...)
 }
 
-func (cmd *Command) SetFlag(name string, value interface{}) {
-	cmd.flags[name] = value
+func (cmd *Command) AddFlag(name string, value interface{}) {
+	cmd.flags = append(cmd.flags, CommandFlag{
+		name, value,
+	})
 }
 
 func (cmd *Command) GetFile() File {
@@ -94,28 +105,28 @@ func (cmd *Command) GetArgList() []string {
 	list = append(list, cmd.name)
 
 	// collect all the flags
-	flags := make(map[string]interface{})
+	flags := make([]CommandFlag, 0)
 
 	if cmd.isolation&CommandIsolation_Project > 0 {
-		for name, value := range cmd.mod.pj.command_flags {
-			flags[name] = value
+		for _, flag := range cmd.mod.pj.command_flags {
+			flags = append(flags, flag)
 		}
 	}
 	if cmd.isolation&CommandIsolation_Module > 0 {
-		for name, value := range cmd.mod.command_flags {
-			flags[name] = value
+		for _, flag := range cmd.mod.command_flags {
+			flags = append(flags, flag)
 		}
 	}
 	if cmd.isolation&CommandIsolation_File > 0 {
-		for name, value := range cmd.flags {
-			flags[name] = value
+		for _, flag := range cmd.flags {
+			flags = append(flags, flag)
 		}
 	}
 
-	for name, value := range flags {
-		v, ok := parse_flag_value(value)
+	for _, flag := range flags {
+		v, ok := parse_flag_value(flag.value)
 		if ok {
-			list = append(list, name, v)
+			list = append(list, flag.name, v)
 		}
 	}
 
