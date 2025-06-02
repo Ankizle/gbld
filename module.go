@@ -28,6 +28,9 @@ func (pj *Project) AddModule(relative_path string) *Module {
 	mod.pj = pj
 	mod.root = root
 	mod.build = build
+
+	mod.command_flags = make(map[string]interface{})
+
 	mod.compile_callback = func() {
 		fmt.Fprintln(pj.log_file, "warning:", "compile callback for", relative_path, "is unset")
 	}

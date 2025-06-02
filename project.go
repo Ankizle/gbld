@@ -27,7 +27,9 @@ func NewProject(root string, build string, public string) *Project {
 	pj.root = root
 	pj.build = build
 	pj.public = public
+
 	pj.env = make(map[string]string)
+	pj.command_flags = make(map[string]interface{})
 
 	pj.log_file = os.Stdout // default
 
