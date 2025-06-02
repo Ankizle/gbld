@@ -1,7 +1,6 @@
 package gbld_fs
 
 import (
-	"os"
 	"path/filepath"
 
 	"github.com/Ankizle/gbld"
@@ -9,5 +8,5 @@ import (
 
 func SetupFile(f gbld.File) {
 	dir := filepath.Dir(f.Path())
-	os.MkdirAll(dir, os.ModePerm)
+	SetupDir(dir)
 }
