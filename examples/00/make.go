@@ -19,7 +19,7 @@ func main() {
 	pj.Setenv("AR", "ar")
 
 	if e != nil {
-		pj.Log(e)
+		fmt.Println(e)
 		os.Exit(1)
 	}
 
