@@ -42,7 +42,7 @@ func main() {
 			// files we'll need
 			obj := gbld_c.Object(mod.BuildAbs(f))
 			src := gbld_c.SourceCPP(mod.Abs(f))
-			deps := gbld_c.Deps(mod.BuildAbs(f), src)
+			deps := gbld_c.Deps(mod.BuildAbs(f))
 
 			objs = append(objs, obj)
 
@@ -95,8 +95,6 @@ func main() {
 
 		cmd.SetArgs(gbld_fs.Paths(objs)...)
 		cmd.SetName(pj.Getenv("CPP"))
-
-		fmt.Println(cmd.GetArgList())
 
 		cmd.Exec(mod.Abs("."), func(output []byte) {
 			pj.LogErr(string(output))

@@ -9,7 +9,7 @@ import (
 
 // inputs a source file path
 // outputs a list of dependencies obtained from the source file's .d file
-func Deps(f string, default_file gbld.File) []gbld.File {
+func Deps(f string) []gbld.File {
 
 	// the general structure of .d files we'll see are
 
@@ -22,8 +22,7 @@ func Deps(f string, default_file gbld.File) []gbld.File {
 	dep_src := string(dep_src_bytes)
 
 	if e != nil {
-		// if there was an error reading the .d file (doesn't exist or so) then the only dependency is the source file
-		return []gbld.File{default_file}
+		return []gbld.File{}
 	}
 
 	// otherwise, read all the dependencies
