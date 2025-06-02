@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"sync"
 
 	"github.com/Ankizle/gbld"
@@ -103,4 +105,12 @@ func main() {
 
 	var wg sync.WaitGroup
 	pj.Compile(&wg)
+
+	compile_commands := pj.GetCompileCommands()
+	compile_commands_json, _ := json.Marshal(compile_commands)
+	os.WriteFile(
+		filepath.Join(pj.BuildAbs("."), "compile_commands.json"),
+		compile_commands_json,
+		os.ModePerm,
+	)
 }

@@ -69,6 +69,20 @@ func (pj *Project) LogErr(v ...interface{}) {
 	os.Exit(1)
 }
 
+func (pj *Project) Abs(path string) string {
+	if filepath.IsAbs(path) {
+		return path
+	}
+	return filepath.Join(pj.root, path)
+}
+
+func (pj *Project) BuildAbs(path string) string {
+	if filepath.IsAbs(path) {
+		return path
+	}
+	return filepath.Join(pj.build, path)
+}
+
 func (pj *Project) PublicAbs(path string) string {
 	if filepath.IsAbs(path) {
 		return path

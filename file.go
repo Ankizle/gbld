@@ -11,3 +11,7 @@ func NewFile(path string) File {
 func (f *File) Path() string {
 	return f.path
 }
+
+func (f *File) IsReal() bool {
+	return f.Path() != ""
+}
