@@ -126,7 +126,10 @@ func (cmd *Command) GetArgList() []string {
 	for _, flag := range flags {
 		v, ok := parse_flag_value(flag.value)
 		if ok {
-			list = append(list, flag.name, v)
+			list = append(list, flag.name)
+			if v != "" {
+				list = append(list, v)
+			}
 		}
 	}
 
