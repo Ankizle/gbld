@@ -54,11 +54,6 @@ func DefaultBuildShared(pj *gbld.Project, mod *gbld.Module, filenames []string, 
 
 	wg.Wait() // wait for the objects to build
 
-	if len(updated_objs) == 0 {
-		pj.Log("no work:", mod.Root())
-		return
-	}
-
 	// shared library
 	out = Shared(pj.Getenv("OS"), pj.PublicAbs(out_name))
 
