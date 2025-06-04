@@ -40,14 +40,16 @@ func DefaultBuildObjects(pj *gbld.Project, mod *gbld.Module, filenames []string)
 		cmd.SetName(pj.Getenv("CPP"))
 
 		command_string := []byte(fmt.Sprint(cmd.GetArgList()))
-		command_string_file, e_open := os.OpenFile(SourceCommandStringFile(obj.Path()).Path(), os.O_RDWR, os.ModePerm)
+		command_string_file, e_open := os.OpenFile(SourceCommandStringFile(obj.Path()).Path(), os.O_CREATE|os.O_RDWR, os.ModePerm)
+		defer command_string_file.Close()
 
 		command_string_file_string := make([]byte, len(command_string))
 		n_read, e_read := command_string_file.Read(command_string_file_string)
 
+		// for the old command string and new command string to be equal, they need to have the same length
 		command_strings_are_equal := n_read == len(command_string)
-
 		if command_strings_are_equal {
+			// if they have the same length, then carry on checking if all their bytes match
 			for i := range command_string {
 				if command_string[i] != command_string_file_string[i] {
 					command_strings_are_equal = false
@@ -55,8 +57,6 @@ func DefaultBuildObjects(pj *gbld.Project, mod *gbld.Module, filenames []string)
 				}
 			}
 		}
-
-		command_string_file.Close()
 
 		// check if any dependencies were changed
 		if gbld_fs.MaxTimestamp(deps) < gbld_fs.Timestamp(obj) && /* previous build of this file is newer than update */
@@ -72,7 +72,9 @@ func DefaultBuildObjects(pj *gbld.Project, mod *gbld.Module, filenames []string)
 			})
 
 			// log the command used to build this file
+			command_string_file.Seek(0, 0)
 			command_string_file.Write(command_string)
+			command_string_file.Truncate(int64(len(command_string)))
 		}
 	}
 
