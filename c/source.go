@@ -25,3 +25,11 @@ func SourceCXX(f string) gbld.File {
 	new_src_path := change_extension(src_path, ".cxx")
 	return gbld.NewFile(new_src_path)
 }
+
+func SourceCommandStringFile(f string) gbld.File {
+	// this is a special file that notes the command used to build a .o file
+	// extension is .csf
+	src_path := f
+	csf := change_extension(src_path, ".csf")
+	return gbld.NewFile(csf)
+}
