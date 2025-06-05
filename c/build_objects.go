@@ -3,6 +3,7 @@ package gbld_c
 import (
 	"fmt"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/Ankizle/gbld"
@@ -68,7 +69,11 @@ func DefaultBuildObjects(pj *gbld.Project, mod *gbld.Module, filenames []string)
 			updated_objs = append(updated_objs, obj)
 			pj.Log("building:", obj.Path())
 			cmd.ExecAsync(&wg, mod.Abs("."), func(output []byte) {
-				pj.LogErr(string(output))
+				pj.LogErr(
+					"error while building", obj.Path(),
+					"\n"+strings.Join(cmd.GetArgList(), " "),
+					"\n"+string(output),
+				)
 			})
 
 			// log the command used to build this file

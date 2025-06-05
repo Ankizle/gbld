@@ -1,6 +1,8 @@
 package gbld_c
 
 import (
+	"strings"
+
 	"github.com/Ankizle/gbld"
 	gbld_fs "github.com/Ankizle/gbld/fs"
 )
@@ -25,7 +27,11 @@ func DefaultBuildShared(pj *gbld.Project, mod *gbld.Module, filenames []string, 
 	cmd.SetName(pj.Getenv("CPP"))
 
 	cmd.Exec(mod.Abs("."), func(output []byte) {
-		pj.LogErr(string(output))
+		pj.LogErr(
+			"error while building", out.Path(),
+			"\n"+strings.Join(cmd.GetArgList(), " "),
+			"\n"+string(output),
+		)
 	})
 
 	return out
