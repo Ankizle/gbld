@@ -99,3 +99,10 @@ func (pj *Project) Compile(wg *sync.WaitGroup) {
 	}
 	wg.Wait()
 }
+
+func (pj *Project) Clean(wg *sync.WaitGroup) {
+	for _, m := range pj.modules {
+		m.CleanAsync(wg)
+	}
+	wg.Wait()
+}

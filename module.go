@@ -15,6 +15,7 @@ type Module struct {
 	command_flags []CommandFlag
 
 	compile_callback func()
+	clean_callback   func()
 
 	command_log []*Command
 }
@@ -34,6 +35,9 @@ func (pj *Project) AddModule(relative_path string) *Module {
 	mod.compile_callback = func() {
 		fmt.Fprintln(pj.log_file, "warning:", "compile callback for", relative_path, "is unset")
 	}
+	mod.clean_callback = func() {
+		fmt.Fprintln(pj.log_file, "warning:", "clean callback for", relative_path, "is unset")
+	}
 
 	pj.modules = append(pj.modules, mod)
 
@@ -46,6 +50,10 @@ func (mod *Module) Root() string {
 
 func (mod *Module) SetCompileCallback(cb func()) {
 	mod.compile_callback = cb
+}
+
+func (mod *Module) SetCleanCallback(cb func()) {
+	mod.clean_callback = cb
 }
 
 func (mod *Module) Abs(path string) string {
@@ -66,6 +74,14 @@ func (mod *Module) CompileAsync(wg *sync.WaitGroup) {
 	wg.Add(1)
 	go func() {
 		mod.compile_callback()
+		wg.Done()
+	}()
+}
+
+func (mod *Module) CleanAsync(wg *sync.WaitGroup) {
+	wg.Add(1)
+	go func() {
+		mod.clean_callback()
 		wg.Done()
 	}()
 }
