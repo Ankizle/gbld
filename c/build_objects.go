@@ -32,7 +32,6 @@ func DefaultBuildObjects(pj *gbld.Project, mod *gbld.Module, filenames []string)
 		cmd.AddFlag("-MMD", true)
 
 		cmd.AddFlag("-c", true)
-		cmd.AddFlag("-fPIC", true)
 		cmd.AddFlag("-o", obj.Path())
 
 		cmd.AddArg(src.Path())
