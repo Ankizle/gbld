@@ -11,13 +11,13 @@ func DefaultBuildStatic(pj *gbld.Project, mod *gbld.Module, filenames []string, 
 	// object files
 	objs, updated_objs := DefaultBuildObjects(pj, mod, filenames)
 
-	if len(updated_objs) == 0 {
-		pj.Log("no work:", mod.Root())
-		return
-	}
-
 	// static library
 	out = Static(pj.Getenv("OS"), pj.PublicAbs(out_name))
+
+	if len(updated_objs) == 0 {
+		pj.Log("no work:", mod.Root())
+		return out
+	}
 
 	pj.Log("building:", mod.Root())
 
