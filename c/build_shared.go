@@ -11,7 +11,11 @@ func DefaultBuildShared(pj *gbld.Project, mod *gbld.Module, filenames []string, 
 	// object files
 	mod.AddCommandFlag("-fPIC", true)
 	objs, updated_objs := DefaultBuildObjects(pj, mod, filenames)
-	_ = updated_objs
+
+	if len(updated_objs) == 0 {
+		pj.Log("no work:", mod.Root())
+		return
+	}
 
 	// shared library
 	out = Shared(pj.Getenv("OS"), pj.PublicAbs(out_name))

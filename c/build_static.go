@@ -10,7 +10,11 @@ import (
 func DefaultBuildStatic(pj *gbld.Project, mod *gbld.Module, filenames []string, out_name string) (out gbld.File) {
 	// object files
 	objs, updated_objs := DefaultBuildObjects(pj, mod, filenames)
-	_ = updated_objs
+
+	if len(updated_objs) == 0 {
+		pj.Log("no work:", mod.Root())
+		return
+	}
 
 	// static library
 	out = Static(pj.Getenv("OS"), pj.PublicAbs(out_name))
