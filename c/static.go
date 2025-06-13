@@ -1,6 +1,9 @@
 package gbld_c
 
-import "github.com/Ankizle/gbld"
+import (
+	"github.com/Ankizle/gbld"
+	gbld_fs "github.com/Ankizle/gbld/fs"
+)
 
 func Static(os string, f string) gbld.File {
 	src_path := f
@@ -15,7 +18,7 @@ func Static(os string, f string) gbld.File {
 		ext = ".lib"
 	}
 
-	static_path := change_extension(src_path, ext)
-	static_path = add_prefix(static_path, prefix)
+	static_path := gbld_fs.ChangeExt(src_path, ext)
+	static_path = gbld_fs.AddPrefix(static_path, prefix)
 	return gbld.NewFile(static_path)
 }

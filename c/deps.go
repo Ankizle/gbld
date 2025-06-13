@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/Ankizle/gbld"
+	gbld_fs "github.com/Ankizle/gbld/fs"
 )
 
 // inputs a source file path
@@ -17,7 +18,7 @@ func Deps(f string) []gbld.File {
 	// there may be backslashes between dependencies
 
 	// first convert f (which is given as .cpp or .c) to .d
-	dep_path := change_extension(f, ".d")
+	dep_path := gbld_fs.ChangeExt(f, ".d")
 	dep_src_bytes, e := os.ReadFile(dep_path)
 	dep_src := string(dep_src_bytes)
 
