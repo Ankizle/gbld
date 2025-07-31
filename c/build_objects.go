@@ -41,7 +41,6 @@ func DefaultBuildObjects(pj *gbld.Project, mod *gbld.Module, filenames []string)
 
 		command_string := []byte(fmt.Sprint(cmd.GetArgList()))
 		command_string_file, e_open := os.OpenFile(SourceCommandStringFile(obj.Path()).Path(), os.O_CREATE|os.O_RDWR, os.ModePerm)
-		defer command_string_file.Close()
 
 		command_string_file_string := make([]byte, len(command_string))
 		n_read, e_read := command_string_file.Read(command_string_file_string)
@@ -65,6 +64,8 @@ func DefaultBuildObjects(pj *gbld.Project, mod *gbld.Module, filenames []string)
 			pj.Log("no work:", obj.Path())
 			continue // no need to recompile
 		} else {
+			defer command_string_file.Close()
+
 			updated_objs = append(updated_objs, obj)
 			pj.Log("building:", obj.Path())
 			cmd.ExecAsync(&wg, mod.Abs("."), func(output []byte) {
