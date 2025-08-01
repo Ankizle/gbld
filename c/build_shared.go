@@ -7,7 +7,7 @@ import (
 	gbld_fs "github.com/Ankizle/gbld/fs"
 )
 
-func DefaultBuildShared(pj *gbld.Project, mod *gbld.Module, filenames []string, out_name string, version string) (out gbld.File) {
+func DefaultBuildShared(pj *gbld.Project, mod *gbld.Module, filenames []string, out_name string) (out gbld.File) {
 	// object files
 	mod.AddCommandFlag("-fPIC", true)
 	objs, updated_objs := DefaultBuildObjects(pj, mod, filenames)
